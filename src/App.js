@@ -186,8 +186,8 @@ function App() {
       <div>
         <input type="text"></input>
       </div>
-      
-      <AppTitle gridArea="1 / 1 / 2 / 3" width={windowSize.x}>
+
+      {/* <AppTitle gridArea="1 / 1 / 2 / 3" width={windowSize.x}>
         <Image src={logoImg}></Image>
         &nbsp;ListOn
       </AppTitle>
@@ -219,7 +219,7 @@ function App() {
             <img src={thumbnail} title={title} onClick={() => setPlayNumber(index)} width="auto" height="64px" />
           </div>
         ))}
-      </PlayerThumbnail>
+      </PlayerThumbnail> */}
 
       <div>
         <input type="text"></input>
