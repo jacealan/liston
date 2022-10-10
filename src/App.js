@@ -216,6 +216,10 @@ function App() {
         ))}
       </PlayerThumbnail>
 
+      <div>
+        <input type="text"></input>
+      </div>
+
       <Footer width={windowSize.x}>
         <Flex>
           Fully Supported Media: YouTube, Facebook, SoundClound, Vimeo<br />
