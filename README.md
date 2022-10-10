@@ -1,7 +1,9 @@
 # ListOn
+https://liston.vercel.app/
 
 ## Use Library
 - React: https://ko.reactjs.org/
+- styled components: https://styled-components.com/
 - ReactPlayer: https://github.com/CookPete/react-player
 
 ## Reference
