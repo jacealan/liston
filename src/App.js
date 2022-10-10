@@ -3,9 +3,17 @@ import styled, { css } from 'styled-components'
 import ReactPlayer from 'react-player/lazy';
 
 import logoImg from './imgs/logo.svg'
-import listImg from './imgs/list.svg'
+import repeatImg from './imgs/repeat.svg'
+import repeatOffImg from './imgs/repeatOff.svg'
+// import listImg from './imgs/list.svg'
 import listEditImg from './imgs/listEdit.svg'
 import playImg from './imgs/play.svg'
+
+import saveImg from './imgs/save.svg'
+import upImg from './imgs/up.svg'
+import downImg from './imgs/down.svg'
+import deleteImg from './imgs/delete.svg'
+import editImg from './imgs/edit.svg'
 
 // import logoImg from './imgs/logo.svg'
 // import logoImg from './imgs/logo.svg'
@@ -38,25 +46,40 @@ const FlexCenter = styled(Flex)`
 const FlexRight = styled(Flex)`
   justify-content: flex-end;
 `
+const FlexColumn = styled.div`
+  margin: 0 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`
+const DivFont08 = styled.div`
+  font-size: 0.8rem;
+`
 
 // IMG BUTTON
-const Image = styled.img`
+const DivImage = styled.div`
+  margin-top: 3px;
+`
+const Image20 = styled.img`
   width: 20px;
   height: 20px;
+`
+const Image14 = styled.img`
+  width: 14px;
+  height: 14px;
 `
 
 //////////
 // Container
 const Container = styled.div`
   width: ${(props => props.width)}px;
+  min-width: 390px;
   max-width: 960px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
 `
 
 const AppTitle = styled(Flex)`
   max-width: 100vw;
-  grid-area: ${(props) => props.gridArea};
   margin: 10px 0;
   font-weight: 1000;
   color: ${theme.white};
@@ -66,7 +89,6 @@ const Footer = styled.div`
   margin-top: 20px;
   border-top: solid #555 1px;
   padding: 10px;
-  grid-column: 1 / 3;
   display: grid;
   grid-template-columns: 1fr 100px;
   color: #777;
@@ -75,24 +97,24 @@ const Footer = styled.div`
 
 // Player
 const PlayerList = styled.div`
-  grid-column: 1 / 3;
   margin: 10px 0 0 0;
   padding: 10px;
   border-radius: 10px 10px 0 0;
   background-color: ${theme.gray};
   display: grid;
   grid-template-columns: 20px 1fr 20px;
+  // align-items: center;
   gap: 5px;
+  font-size: 1.1rem;
+  font-weight: 600;
 `
 
 const Player = styled.div`
-  grid-column: 1 / 3;
   // width: ${(props => props.width)}px;
   // height: ${(props => props.width / 2)}px;
 `
 
 const PlayerInfo = styled.div`
-  grid-column: 1 / 3;
   padding: 10px;
   border-radius: 0 0 10px 10px;
   background-color: ${theme.gray};
@@ -101,9 +123,16 @@ const PlayerInfo = styled.div`
   gap: 5px;
 `
 
+const AuthorInfo = styled.div`
+  padding-right: 5px;
+  align-self: flex-end;
+  text-align: right;
+  font-size: 0.7rem;
+  transform: skew(170deg);
+`
+
 const PlayerThumbnail = styled.div`
-  // margin-bottom: 30px;
-  grid-column: 1 / 3;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   & div {
@@ -114,9 +143,36 @@ const PlayerThumbnail = styled.div`
   }
 `
 
-// Make Item
+// Edit
+const Edit = styled.div`
+  margin: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  gap: 10px;
+`
 
-// Edit List
+const EditBlock = styled.div`
+  background-color: ${theme.gray};
+  border-radius: 5px;
+  padding: 10px;
+`
+
+//// Add Item
+
+//// Edit List
+const EditListTitle = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 20px;
+`
+const EditListOne = styled.div`
+  margin-top: 4px;
+  border-top: solid #777 1px;
+  padding-top: 6px;
+  display: grid;
+  grid-template-columns: 20px 1fr 3fr 20px;
+  gap: 5px;
+`
+
 
 
 const Button = styled.button`
@@ -141,8 +197,9 @@ const ImageTest = styled.img.attrs({
 `
 
 function App() {
+  const [repeat, setRepeat] = useState(false)
   const listBox = [
-    {idx: 0, title: 'BEST LIST', description: '딩고 뮤직 킬링보이스 & ...', username: 'jace'},
+    {idx: 0, title: 'Jace\'s Pick', description: '딩고 뮤직 킬링보이스 & ...', username: 'jace'},
   ]
   const playListTemplate = [
     // {title: 'YENA (최예나) - SMILEY (Feat. BIBI) MV', author: 'Stone Music Entertainment', provider: 'YouTube', url: 'https://youtu.be/y9kkXTucnLU' , thumbnail: 'https://i.ytimg.com/vi/y9kkXTucnLU/hqdefault.jpg'},
@@ -183,19 +240,15 @@ function App() {
   return (
     <Container width={windowSize.x}>
       
-      <div>
-        <input type="text"></input>
-      </div>
-
-      <AppTitle gridArea="1 / 1 / 2 / 3" width={windowSize.x}>
-        <Image src={logoImg}></Image>
+      <AppTitle width={windowSize.x}>
+        <Image20 src={logoImg}></Image20>
         &nbsp;ListOn
       </AppTitle>
 
       <PlayerList width={windowSize.x}>
-        <div><Image src={listImg}></Image></div>
-        <Flex>list</Flex>
-        <div><Image src={listEditImg}></Image></div>
+        <DivImage onClick={() => setRepeat(prev => !prev)}><Image20 src={repeat ? repeatImg : repeatOffImg}></Image20></DivImage>
+        <Flex>{listBox[0].title}</Flex>
+        <DivImage><Image20 src={listEditImg}></Image20></DivImage>
       </PlayerList>
       <Player>
         <ReactPlayer
@@ -203,6 +256,8 @@ function App() {
           onEnded={() => {
             if (playNumber + 1 !== playList.length) {
               setPlayNumber(prev => prev + 1)
+            } else if (repeat) {
+              setPlayNumber(0)
             }
           }}
           playing={true}
@@ -210,8 +265,11 @@ function App() {
           width={windowSize.xPlay} height={windowSize.yPlay}></ReactPlayer>
       </Player>
       <PlayerInfo width={windowSize.x}>
-        <div><Image src={playImg}></Image></div>
-        <div>{playList[playNumber].title}</div>
+        <DivImage><Image20 src={playImg}></Image20></DivImage>
+        <div>
+          <div>{playList[playNumber].title}</div>
+          <AuthorInfo>{playList[playNumber].author}</AuthorInfo>
+        </div>
       </PlayerInfo>
       <PlayerThumbnail playNumber={playNumber}>
         {playList.map(({title, author, provider, url, thumbnail}, index) => (
@@ -220,6 +278,85 @@ function App() {
           </div>
         ))}
       </PlayerThumbnail>
+
+      <Edit>
+        <EditBlock>
+          ADD
+        </EditBlock>
+        <EditBlock>
+
+          <EditListTitle>
+            <div>LIST</div>
+            <div>
+              <Image20 src={saveImg}
+                onClick={() => {window.localStorage.setItem('liston', JSON.stringify(playList));}} />
+            </div>
+          </EditListTitle>
+          { playList.map(({title, author, provider, url, thumbnail}, index) => (
+            <EditListOne>
+              <FlexColumn>
+                <div>
+                  <Image14 src={upImg}
+                    onClick={() => {
+                      if (index !== 0) {
+                        const temp = playList[index - 1];
+                        playList[index - 1] = playList[index];
+                        playList[index] = temp;
+                        setPlayList(playList.slice())
+                      }
+                    }} />
+                </div>
+                <div>                  
+                  <Image14 src={downImg}
+                    onClick={() => {
+                      console.log(index, playList.length)
+                      if (index !== playList.length - 1) {
+                        const temp = playList[index + 1];
+                        playList[index + 1] = playList[index];
+                        playList[index] = temp;
+                        setPlayList(playList.slice())
+                      }
+                    }} />
+                </div>
+              </FlexColumn>
+              <div className="play-list-one-image"><img src={thumbnail} width="100%" height="auto" /></div>
+              <FlexColumn>
+                <DivFont08>{title}</DivFont08>
+                <AuthorInfo>[ {author} ]</AuthorInfo>
+              </FlexColumn>
+              <FlexColumn>
+                <div>
+                  <Image14 src={deleteImg}
+                    onClick={() => {
+                      playList.splice(index, 1)
+                      setPlayList(playList.slice())
+                    }} />
+                </div>
+                <div>                  
+                  <Image14 src={editImg}
+                    onClick={async () => {
+                      // setInputUrl(url)
+                      // setCheckUrl(url)
+                      // await getUrlInfo(url)
+                      // setPlayListEditIndex(index)
+                      // inputUrlInfo.title = title
+                      // inputUrlInfo.author_name = author
+                      // inputUrlInfo.provider_name = provider
+                      // inputUrlInfo.url = url
+                      // inputUrlInfo.thumbnail_url = thumbnail
+                      // setInputUrlInfo(JSON.parse(JSON.stringify(inputUrlInfo)))
+                    }} />
+                </div>
+              </FlexColumn>
+            </EditListOne>
+          ))}
+
+        </EditBlock>
+      </Edit>
+
+      <div className="edit">
+
+      </div>
 
       <div>
         <input type="text"></input>
@@ -236,7 +373,7 @@ function App() {
       <Button>Normal Button</Button>
       <Button primary>Primary Button</Button>
       <ImageTest></ImageTest>
-      <Image src="https://i.ytimg.com/vi/hn4XiirKdNE/hqdefault.jpg" />
+      <Image20 src="https://i.ytimg.com/vi/hn4XiirKdNE/hqdefault.jpg" />
     </Container>
   )
 }
