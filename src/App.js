@@ -9,7 +9,8 @@ import repeatOffImg from './imgs/repeatOff.svg'
 import listEditImg from './imgs/listEdit.svg'
 import playImg from './imgs/play.svg'
 
-import saveImg from './imgs/save.svg'
+// import saveImg from './imgs/save.svg'
+import storageImg from './imgs/storage.svg'
 import upImg from './imgs/up.svg'
 import downImg from './imgs/down.svg'
 import deleteImg from './imgs/delete.svg'
@@ -288,7 +289,7 @@ function App() {
           <EditListTitle>
             <div>LIST</div>
             <div>
-              <Image20 src={saveImg}
+              <Image20 src={storageImg}
                 onClick={() => {window.localStorage.setItem('liston', JSON.stringify(playList));}} />
             </div>
           </EditListTitle>
@@ -358,10 +359,6 @@ function App() {
 
       </div>
 
-      <div>
-        <input type="text"></input>
-      </div>
-
       <Footer width={windowSize.x}>
         <Flex>
           Fully Supported Media: YouTube, Facebook, SoundClound, Vimeo<br />
@@ -370,10 +367,6 @@ function App() {
         <FlexRight>Copyright. Jace</FlexRight>
       </Footer>
 
-      <Button>Normal Button</Button>
-      <Button primary>Primary Button</Button>
-      <ImageTest></ImageTest>
-      <Image20 src="https://i.ytimg.com/vi/hn4XiirKdNE/hqdefault.jpg" />
     </Container>
   )
 }
