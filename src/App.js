@@ -182,6 +182,11 @@ function App() {
 
   return (
     <Container width={windowSize.x}>
+      
+      <div>
+        <input type="text"></input>
+      </div>
+      
       <AppTitle gridArea="1 / 1 / 2 / 3" width={windowSize.x}>
         <Image src={logoImg}></Image>
         &nbsp;ListOn
