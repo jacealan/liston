@@ -38,7 +38,7 @@ const FlexRight = styled(Flex)`
   justify-content: flex-end;
 `
 const FlexColumn = styled.div`
-  margin: 0 5px;
+  margin: ${props => props.margin};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -174,6 +174,7 @@ const AddInput = styled.input`
   outline: none;
   background-color: #444;
   color: #aaa;
+  font-size: 1rem;
 `
 const AddOne = styled.div`
   margin-top: 4px;
@@ -195,6 +196,7 @@ const AddInfo = styled.div`
 const Textarea = styled.textarea`
   overflow: hidden;
   width: calc(100% - 10px);
+  border: solid 1px #aaa;
   border-radius: 5px;
   outline: none;
   padding: 10px;
@@ -351,13 +353,16 @@ function App() {
             }} />
           </Flex>
           <div className="add-checked">
-            <div>
-              <ReactPlayer url={inputUrlInfo.url} width={`${windowSize.xHalf - 15}px`} height={`${(windowSize.xHalf - 15) / 2}px`} />
+            <FlexColumn margin="10px 0 0 0">
+              <ReactPlayer
+                url={inputUrlInfo.url}
+                width={`${windowSize.x > 760 ? windowSize.xHalf - 25 : windowSize.x - 20}px`}
+                height={`${(windowSize.x > 760 ? windowSize.xHalf - 25 : windowSize.x - 20) / 2}px`} />
               <FlexCenter><DivFont08>외부 플레이가 제한된 영상도 있습니다.</DivFont08></FlexCenter>
-            </div>
+            </FlexColumn>
             <AddOne>
               <div><img src={inputUrlInfo.thumbnail_url} alt={inputUrlInfo.title} width="100%" height="auto" /></div>
-              <FlexColumn>
+              <FlexColumn margin="0 5px">
                 <DivFont08>{inputUrlInfo.title}</DivFont08>
                 <AuthorInfo>[ {inputUrlInfo.author_name} ]</AuthorInfo>
               </FlexColumn>
