@@ -11,22 +11,6 @@ import { FileMark } from '@styled-icons/remix-line'
 import { InsertRowTop, InsertRowBottom } from '@styled-icons/remix-editor'
 
 import logoImg from './imgs/logo.svg'
-import repeatImg from './imgs/repeat.svg'
-import repeatOffImg from './imgs/repeatOff.svg'
-// import listImg from './imgs/list.svg'
-import listEditImg from './imgs/listEdit.svg'
-import playImg from './imgs/play.svg'
-
-import pasteImg from './imgs/paste.svg'
-import checkImg from './imgs/check.svg'
-import addImg from './imgs/add.svg'
-
-// import saveImg from './imgs/save.svg'
-import storageImg from './imgs/storage.svg'
-import upImg from './imgs/up.svg'
-import downImg from './imgs/down.svg'
-import deleteImg from './imgs/delete.svg'
-import editImg from './imgs/edit.svg'
 
 //////////
 // Themes
@@ -95,6 +79,7 @@ const AppTitle = styled(Flex)`
 `
 
 const CenterImage = styled.div`
+  max-width: 100vw;
   margin: 30px 0;
   display: grid;
   grid-template-columns: 1fr 40px 1fr;
