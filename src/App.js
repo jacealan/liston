@@ -103,7 +103,7 @@ const PlayerList = styled.div`
   border-radius: 10px 10px 0 0;
   background-color: ${theme.gray};
   display: grid;
-  grid-template-columns: 20px 60px 1fr 20px;
+  grid-template-columns: 30px 60px 1fr 20px;
   // align-items: center;
   gap: 5px;
   font-size: 1.1rem;
@@ -293,8 +293,8 @@ function App() {
     <Container width={windowSize.x}>
       
       <PlayerList width={windowSize.x}>
-        <CollectionPlayFill />
-        <div>&nbsp;ListOn</div>
+        <CollectionPlayFill size="24" />
+        <div>ListOn</div>
         <FlexRight>{listBox[0].title}</FlexRight>
         <Flex onClick={() => setRepeat(prev => !prev)}>{repeat ? <ArrowRepeatAll /> : <ArrowRepeatAllOff />}</Flex>
       </PlayerList>
