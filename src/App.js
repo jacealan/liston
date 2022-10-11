@@ -9,6 +9,10 @@ import repeatOffImg from './imgs/repeatOff.svg'
 import listEditImg from './imgs/listEdit.svg'
 import playImg from './imgs/play.svg'
 
+import pasteImg from './imgs/paste.svg'
+import checkImg from './imgs/check.svg'
+import addImg from './imgs/add.svg'
+
 // import saveImg from './imgs/save.svg'
 import storageImg from './imgs/storage.svg'
 import upImg from './imgs/up.svg'
@@ -39,6 +43,9 @@ const Flex = styled.div`
   grid-area: ${(props) => props.gridArea};
   display: flex;
   align-itemts: center;
+  ${props => props.spaceBetween && css`
+    justify-content: space-between;
+  `}
 `
 const FlexCenter = styled(Flex)`
   justify-content: center;
@@ -53,6 +60,9 @@ const FlexColumn = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  ${props => props.center && css`
+    justify-content: center;
+  `}
 `
 const DivFont08 = styled.div`
   font-size: 0.8rem;
@@ -159,6 +169,48 @@ const EditBlock = styled.div`
 `
 
 //// Add Item
+const AddUrl = styled.div`
+  display: grid;
+  grid-template-columns: 24px 1fr 24px;
+  justify-content: space-between;
+  align-items: center;
+`
+const AddInput = styled.input`
+  width: ${props => props.width}px;
+  margin: 0 3px;
+  border: solid 1px #aaa;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+  background-color: #444;
+  color: #aaa;
+`
+const AddOne = styled.div`
+  margin-top: 4px;
+  border-top: solid #777 1px;
+  padding-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 5px;
+`
+const AddInfo = styled.div`
+  margin-top: 5px;
+  border-top: solid #777 1px;
+  padding-top: 5px;
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  font-size: 0.8rem;
+  font-weight: 600;
+`
+const Textarea = styled.textarea`
+  overflow: hidden;
+  width: calc(100% - 10px);
+  border-radius: 5px;
+  outline: none;
+  padding: 5px 5px 0 5px;
+  background-color: #444;
+  color: #ddd;
+`
 
 //// Edit List
 const EditListTitle = styled.div`
@@ -175,20 +227,6 @@ const EditListOne = styled.div`
 `
 
 
-
-const Button = styled.button`
-  background: transparent;
-  border-radius: 3px;
-  border: 2px solid palevioletred;
-  color: palevioletred;
-  margin: 0.5em 1em;
-  padding: 0.25em 1em;
-
-  ${props => props.primary && css`
-    background: palevioletred;
-    color: white;
-  `}
-`;
 
 const ImageTest = styled.img.attrs({
   src: `${logoImg}`,
@@ -218,6 +256,26 @@ function App() {
   )
   const [playNumber, setPlayNumber] = useState(0)
 
+  //Edit  
+  const [inputUrl, setInputUrl] = useState('')
+  // const [checkUrl, setCheckUrl] = useState('')
+  const [inputUrlInfo, setInputUrlInfo] = useState('')
+  const getUrlInfo = async (url) => {
+    const response = await fetch(`https://noembed.com/embed?dataType=json&url=${url}`)
+                      .then((response) => response.json());
+    setInputUrlInfo(response)
+  }  
+  const [editIndex, setEditIndex] = useState(null)
+
+  // Textarea Resize
+  const checkTitle = useRef();
+  const checkAuthor = useRef();
+  useEffect(() => {
+    checkTitle.current.style.height = 'auto'
+    checkTitle.current.style.height = `${checkTitle.current.scrollHeight}px`
+    checkAuthor.current.style.height = 'auto'
+    checkAuthor.current.style.height = `${checkAuthor.current.scrollHeight}px`
+  }, [inputUrlInfo])
 
   // Window Size
   const [windowSize, setWindowSize] = useState({x: 960, y: 960})
@@ -245,6 +303,8 @@ function App() {
         <Image20 src={logoImg}></Image20>
         &nbsp;ListOn
       </AppTitle>
+
+
 
       <PlayerList width={windowSize.x}>
         <DivImage onClick={() => setRepeat(prev => !prev)}><Image20 src={repeat ? repeatImg : repeatOffImg}></Image20></DivImage>
@@ -275,14 +335,87 @@ function App() {
       <PlayerThumbnail playNumber={playNumber}>
         {playList.map(({title, author, provider, url, thumbnail}, index) => (
           <div>
-            <img src={thumbnail} title={title} onClick={() => setPlayNumber(index)} width="auto" height="64px" />
+            <img src={thumbnail} alt={title} title={title} onClick={() => setPlayNumber(index)} width="auto" height="64px" />
           </div>
         ))}
       </PlayerThumbnail>
 
+
+
       <Edit>
         <EditBlock>
-          ADD
+          <div>ADD</div>          
+          <Flex spaceBetween>
+            <DivImage>
+              <Image20 src={pasteImg} onClick={() => {
+                navigator.clipboard.readText().then(clipboardText => setInputUrl(clipboardText));   
+              }} />
+            </DivImage>
+            <div>
+              <AddInput type="text"
+                placeholder="추가할 영상 url을 입력하세요."
+                width={windowSize.xHalf - 85}
+                value={inputUrl}
+                onChange={(e) => {
+                  setInputUrl(e.target.value)
+                  }}
+              />
+            </div>
+            <DivImage>
+              <Image20 src={checkImg} onClick={() => {
+                // setCheckUrl(inputUrl);
+                getUrlInfo(inputUrl);
+              }} />
+            </DivImage>
+          </Flex>
+          <div className="add-checked">
+            <div>
+              <ReactPlayer url={inputUrlInfo.url} width={`${windowSize.xHalf - 15}px`} height={`${(windowSize.xHalf - 15) / 2}px`} />
+              <FlexCenter><DivFont08>외부 플레이가 제한된 영상도 있습니다.</DivFont08></FlexCenter>
+            </div>
+            <AddOne>
+              <div><img src={inputUrlInfo.thumbnail_url} alt={inputUrlInfo.title} width="100%" height="auto" /></div>
+              <FlexColumn>
+                <DivFont08>{inputUrlInfo.title}</DivFont08>
+                <AuthorInfo>[ {inputUrlInfo.author_name} ]</AuthorInfo>
+              </FlexColumn>
+            </AddOne>
+            <AddInfo>
+              <div>
+                <div className="label">TITLE</div>
+                <Textarea ref={checkTitle} value={inputUrlInfo.title} rows={1}
+                  onChange={(e) => {
+                    const temp = inputUrlInfo
+                    temp.title = e.target.value
+                    setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
+                  }} />
+                <div className="label">AUTHOR</div>
+                <Textarea ref={checkAuthor} value={inputUrlInfo.author_name} rows={1}
+                  onChange={(e) => {
+                    const temp = inputUrlInfo
+                    temp.author_name = e.target.value
+                    setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
+                  }} />
+              </div>
+              <FlexColumn center>
+                <DivImage>
+                  <Image20 src={addImg}
+                    onClick={() => {
+                      console.log(editIndex)
+                      if (editIndex !== null) {
+                        playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
+                        setPlayList(playList.slice())
+                        setEditIndex(null)
+                      } else {
+                        playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
+                        setPlayList(playList.slice())
+                      }
+                    }} />
+                </DivImage>
+                <FlexCenter>to LIST</FlexCenter>
+              </FlexColumn>
+            </AddInfo>
+          </div>
         </EditBlock>
         <EditBlock>
 
@@ -290,7 +423,9 @@ function App() {
             <div>LIST</div>
             <div>
               <Image20 src={storageImg}
-                onClick={() => {window.localStorage.setItem('liston', JSON.stringify(playList));}} />
+                onClick={() => {
+                  window.localStorage.setItem('liston', JSON.stringify(playList));
+                  alert('Your list is saved')}} />
             </div>
           </EditListTitle>
           { playList.map(({title, author, provider, url, thumbnail}, index) => (
@@ -320,7 +455,7 @@ function App() {
                     }} />
                 </div>
               </FlexColumn>
-              <div className="play-list-one-image"><img src={thumbnail} width="100%" height="auto" /></div>
+              <div><img src={thumbnail} alt={title} width="100%" height="auto" /></div>
               <FlexColumn>
                 <DivFont08>{title}</DivFont08>
                 <AuthorInfo>[ {author} ]</AuthorInfo>
@@ -355,9 +490,7 @@ function App() {
         </EditBlock>
       </Edit>
 
-      <div className="edit">
 
-      </div>
 
       <Footer width={windowSize.x}>
         <Flex>
