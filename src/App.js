@@ -22,7 +22,8 @@ const theme = themes[0]
 //////////
 // DIV Flex
 const Flex = styled.div`
-  grid-area: ${(props) => props.gridArea};
+  margin: ${props => props.margin};
+  grid-area: ${props => props.gridArea};
   display: flex;
   align-itemts: center;
   ${props => props.spaceBetween && css`
@@ -323,11 +324,9 @@ function App() {
         ))}
       </PlayerThumbnail>
 
-      <CenterImage>
-        <div></div>
-        <TextBulletListSquareEdit />
-        <div></div>
-      </CenterImage>
+      <FlexCenter margin="20px 0">
+        <TextBulletListSquareEdit size="40" />
+      </FlexCenter>
 
       <EditMode>
         <EditBlock>
@@ -339,7 +338,7 @@ function App() {
             <div>
               <AddInput type="text"
                 placeholder="추가할 영상 url을 입력하세요."
-                width={windowSize.xHalf - 85}
+                width={windowSize.x > 720 ? windowSize.xHalf - 85 : windowSize.x - 85}
                 value={inputUrl}
                 onChange={(e) => {
                   setInputUrl(e.target.value)
