@@ -393,7 +393,7 @@ function App() {
                       playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
                       setPlayList(playList.slice())
                       setEditIndex(null)
-                    } else {
+                    } else if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
                       playList.unshift({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
                       setPlayList(playList.slice())
                     }
@@ -405,7 +405,7 @@ function App() {
                       playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
                       setPlayList(playList.slice())
                       setEditIndex(null)
-                    } else {
+                    } else if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
                       playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
                       setPlayList(playList.slice())
                     }
