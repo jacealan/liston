@@ -340,7 +340,7 @@ function App() {
             <div>
               <AddInput type="text"
                 placeholder="추가할 영상 url을 입력하세요."
-                width={windowSize.x >= 720 ? windowSize.xHalf - 85 : windowSize.x - 85}
+                width={windowSize.x >= 710 ? windowSize.xHalf - 85 : windowSize.x - 85}
                 value={inputUrl}
                 onChange={(e) => {
                   setInputUrl(e.target.value)
