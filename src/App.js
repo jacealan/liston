@@ -340,7 +340,7 @@ function App() {
             <div>
               <AddInput type="text"
                 placeholder="추가할 영상 url을 입력하세요."
-                width={windowSize.x > 720 ? windowSize.xHalf - 85 : windowSize.x - 85}
+                width={windowSize.x > 730 ? windowSize.xHalf - 85 : windowSize.x - 85}
                 value={inputUrl}
                 onChange={(e) => {
                   setInputUrl(e.target.value)
@@ -356,8 +356,8 @@ function App() {
             <FlexColumn margin="10px 0 0 0">
               <ReactPlayer
                 url={inputUrlInfo.url}
-                width={`${windowSize.x > 720 ? windowSize.xHalf - 25 : windowSize.x - 20}px`}
-                height={`${(windowSize.x > 720 ? windowSize.xHalf - 25 : windowSize.x - 20) / 2}px`} />
+                width={`${windowSize.x > 730 ? windowSize.xHalf - 25 : windowSize.x - 20}px`}
+                height={`${(windowSize.x > 730 ? windowSize.xHalf - 25 : windowSize.x - 20) / 2}px`} />
               <FlexCenter><DivFont08>외부 플레이가 제한된 영상도 있습니다.</DivFont08></FlexCenter>
             </FlexColumn>
             <AddOne>
