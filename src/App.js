@@ -83,7 +83,7 @@ const Image14 = styled.img`
 // Container
 const Container = styled.div`
   width: ${(props => props.width)}px;
-  min-width: 390px;
+  min-width: 360px;
   max-width: 960px;
 `
 
@@ -162,7 +162,7 @@ const PlayerThumbnail = styled.div`
 const EditMode = styled.div`
   margin: 20px 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: 10px;
 `
 
@@ -217,7 +217,8 @@ const Textarea = styled.textarea`
 `
 
 //// Edit List
-const EditListTitle = styled.div`
+const EditTitle = styled.div`
+  margin-bottom: 10px;
   display: grid;
   grid-template-columns: 1fr 20px;
 `
@@ -227,7 +228,7 @@ const EditListOne = styled.div`
   padding-top: 6px;
   display: grid;
   grid-template-columns: 20px 1fr 3fr 20px;
-  gap: 5px;
+  gap: 10px;
 `
 
 
@@ -345,7 +346,7 @@ function App() {
 
       <EditMode>
         <EditBlock>
-          <div>ADD</div>          
+          <EditTitle>ADD</EditTitle>
           <Flex spaceBetween>
             <CopyArrowRight size="24" onClick={() => {
               navigator.clipboard.readText().then(clipboardText => setInputUrl(clipboardText));   
@@ -425,7 +426,7 @@ function App() {
         </EditBlock>
         <EditBlock>
 
-          <EditListTitle>
+          <EditTitle>
             <div>LIST</div>
             <Flex>
               <FileMark
@@ -433,7 +434,7 @@ function App() {
                   window.localStorage.setItem('liston', JSON.stringify(playList));
                   alert('Your list is saved')}} />
             </Flex>
-          </EditListTitle>
+          </EditTitle>
           { playList.map(({title, author, provider, url, thumbnail}, index) => (
             <EditListOne>
               <FlexColumn>
