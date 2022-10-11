@@ -2,6 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components'
 import ReactPlayer from 'react-player/lazy';
 
+import { Collection, CollectionPlayFill } from '@styled-icons/bootstrap'
+import { ArrowRepeatAllOff, ArrowRepeatAll } from '@styled-icons/fluentui-system-regular'
+import { MoviePlay, ChevronUpCircle, ChevronDownCircle, Edit, Delete } from '@styled-icons/boxicons-solid'
+import { TextBulletListSquareEdit, CopyArrowRight } from '@styled-icons/fluentui-system-filled'
+import { PlaylistAddCheck, DeleteForever } from '@styled-icons/material-rounded'
+import { FileMark } from '@styled-icons/remix-line'
+import { InsertRowTop, InsertRowBottom } from '@styled-icons/remix-editor'
+
 import logoImg from './imgs/logo.svg'
 import repeatImg from './imgs/repeat.svg'
 import repeatOffImg from './imgs/repeatOff.svg'
@@ -19,16 +27,6 @@ import upImg from './imgs/up.svg'
 import downImg from './imgs/down.svg'
 import deleteImg from './imgs/delete.svg'
 import editImg from './imgs/edit.svg'
-
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
-// import logoImg from './imgs/logo.svg'
 
 //////////
 // Themes
@@ -96,6 +94,12 @@ const AppTitle = styled(Flex)`
   color: ${theme.white};
 `
 
+const CenterImage = styled.div`
+  margin: 30px 0;
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+`
+
 const Footer = styled.div`
   margin-top: 20px;
   border-top: solid #555 1px;
@@ -113,7 +117,7 @@ const PlayerList = styled.div`
   border-radius: 10px 10px 0 0;
   background-color: ${theme.gray};
   display: grid;
-  grid-template-columns: 20px 1fr 20px;
+  grid-template-columns: 80px 1fr 20px;
   // align-items: center;
   gap: 5px;
   font-size: 1.1rem;
@@ -155,7 +159,7 @@ const PlayerThumbnail = styled.div`
 `
 
 // Edit
-const Edit = styled.div`
+const EditMode = styled.div`
   margin: 20px 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
@@ -207,7 +211,7 @@ const Textarea = styled.textarea`
   width: calc(100% - 10px);
   border-radius: 5px;
   outline: none;
-  padding: 5px 5px 0 5px;
+  padding: 10px;
   background-color: #444;
   color: #ddd;
 `
@@ -299,17 +303,10 @@ function App() {
   return (
     <Container width={windowSize.x}>
       
-      <AppTitle width={windowSize.x}>
-        <Image20 src={logoImg}></Image20>
-        &nbsp;ListOn
-      </AppTitle>
-
-
-
       <PlayerList width={windowSize.x}>
-        <DivImage onClick={() => setRepeat(prev => !prev)}><Image20 src={repeat ? repeatImg : repeatOffImg}></Image20></DivImage>
-        <Flex>{listBox[0].title}</Flex>
-        <DivImage><Image20 src={listEditImg}></Image20></DivImage>
+        <Flex><CollectionPlayFill />&nbsp;ListOn</Flex>
+        <FlexRight>{listBox[0].title}</FlexRight>
+        <Flex onClick={() => setRepeat(prev => !prev)}>{repeat ? <ArrowRepeatAll /> : <ArrowRepeatAllOff />}</Flex>
       </PlayerList>
       <Player>
         <ReactPlayer
@@ -326,7 +323,7 @@ function App() {
           width={windowSize.xPlay} height={windowSize.yPlay}></ReactPlayer>
       </Player>
       <PlayerInfo width={windowSize.x}>
-        <DivImage><Image20 src={playImg}></Image20></DivImage>
+        <div><MoviePlay /></div>
         <div>
           <div>{playList[playNumber].title}</div>
           <AuthorInfo>{playList[playNumber].author}</AuthorInfo>
@@ -340,17 +337,19 @@ function App() {
         ))}
       </PlayerThumbnail>
 
+      <CenterImage>
+        <div></div>
+        <TextBulletListSquareEdit />
+        <div></div>
+      </CenterImage>
 
-
-      <Edit>
+      <EditMode>
         <EditBlock>
           <div>ADD</div>          
           <Flex spaceBetween>
-            <DivImage>
-              <Image20 src={pasteImg} onClick={() => {
-                navigator.clipboard.readText().then(clipboardText => setInputUrl(clipboardText));   
-              }} />
-            </DivImage>
+            <CopyArrowRight size="24" onClick={() => {
+              navigator.clipboard.readText().then(clipboardText => setInputUrl(clipboardText));   
+            }} />
             <div>
               <AddInput type="text"
                 placeholder="추가할 영상 url을 입력하세요."
@@ -361,12 +360,10 @@ function App() {
                   }}
               />
             </div>
-            <DivImage>
-              <Image20 src={checkImg} onClick={() => {
-                // setCheckUrl(inputUrl);
-                getUrlInfo(inputUrl);
-              }} />
-            </DivImage>
+            <PlaylistAddCheck size="26" onClick={() => {
+              // setCheckUrl(inputUrl);
+              getUrlInfo(inputUrl);
+            }} />
           </Flex>
           <div className="add-checked">
             <div>
@@ -398,21 +395,30 @@ function App() {
                   }} />
               </div>
               <FlexColumn center>
-                <DivImage>
-                  <Image20 src={addImg}
-                    onClick={() => {
-                      console.log(editIndex)
-                      if (editIndex !== null) {
-                        playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
-                        setPlayList(playList.slice())
-                        setEditIndex(null)
-                      } else {
-                        playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
-                        setPlayList(playList.slice())
-                      }
-                    }} />
-                </DivImage>
-                <FlexCenter>to LIST</FlexCenter>
+                <InsertRowTop
+                  onClick={() => {
+                    console.log(editIndex)
+                    if (editIndex !== null) {
+                      playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
+                      setPlayList(playList.slice())
+                      setEditIndex(null)
+                    } else {
+                      playList.unshift({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
+                      setPlayList(playList.slice())
+                    }
+                  }} />
+                <InsertRowBottom
+                  onClick={() => {
+                    console.log(editIndex)
+                    if (editIndex !== null) {
+                      playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
+                      setPlayList(playList.slice())
+                      setEditIndex(null)
+                    } else {
+                      playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
+                      setPlayList(playList.slice())
+                    }
+                  }} />
               </FlexColumn>
             </AddInfo>
           </div>
@@ -421,39 +427,35 @@ function App() {
 
           <EditListTitle>
             <div>LIST</div>
-            <div>
-              <Image20 src={storageImg}
+            <Flex>
+              <FileMark
                 onClick={() => {
                   window.localStorage.setItem('liston', JSON.stringify(playList));
                   alert('Your list is saved')}} />
-            </div>
+            </Flex>
           </EditListTitle>
           { playList.map(({title, author, provider, url, thumbnail}, index) => (
             <EditListOne>
               <FlexColumn>
-                <div>
-                  <Image14 src={upImg}
-                    onClick={() => {
-                      if (index !== 0) {
-                        const temp = playList[index - 1];
-                        playList[index - 1] = playList[index];
-                        playList[index] = temp;
-                        setPlayList(playList.slice())
-                      }
-                    }} />
-                </div>
-                <div>                  
-                  <Image14 src={downImg}
-                    onClick={() => {
-                      console.log(index, playList.length)
-                      if (index !== playList.length - 1) {
-                        const temp = playList[index + 1];
-                        playList[index + 1] = playList[index];
-                        playList[index] = temp;
-                        setPlayList(playList.slice())
-                      }
-                    }} />
-                </div>
+                <ChevronUpCircle size="20" color={index === 0 ? "#555": ""}
+                  onClick={() => {
+                    if (index !== 0) {
+                      const temp = playList[index - 1];
+                      playList[index - 1] = playList[index];
+                      playList[index] = temp;
+                      setPlayList(playList.slice())
+                    }
+                  }} />           
+                <ChevronDownCircle size="20" color={index === playList.length - 1 ? "#555": ""}
+                  onClick={() => {
+                    console.log(index, playList.length)
+                    if (index !== playList.length - 1) {
+                      const temp = playList[index + 1];
+                      playList[index + 1] = playList[index];
+                      playList[index] = temp;
+                      setPlayList(playList.slice())
+                    }
+                  }} />
               </FlexColumn>
               <div><img src={thumbnail} alt={title} width="100%" height="auto" /></div>
               <FlexColumn>
@@ -461,34 +463,30 @@ function App() {
                 <AuthorInfo>[ {author} ]</AuthorInfo>
               </FlexColumn>
               <FlexColumn>
-                <div>
-                  <Image14 src={deleteImg}
-                    onClick={() => {
-                      playList.splice(index, 1)
-                      setPlayList(playList.slice())
-                    }} />
-                </div>
-                <div>                  
-                  <Image14 src={editImg}
-                    onClick={async () => {
-                      // setInputUrl(url)
-                      // setCheckUrl(url)
-                      // await getUrlInfo(url)
-                      // setPlayListEditIndex(index)
-                      // inputUrlInfo.title = title
-                      // inputUrlInfo.author_name = author
-                      // inputUrlInfo.provider_name = provider
-                      // inputUrlInfo.url = url
-                      // inputUrlInfo.thumbnail_url = thumbnail
-                      // setInputUrlInfo(JSON.parse(JSON.stringify(inputUrlInfo)))
-                    }} />
-                </div>
+                <DeleteForever size="20"
+                  onClick={() => {
+                    playList.splice(index, 1)
+                    setPlayList(playList.slice())
+                  }} />            
+                <Edit size="20"
+                  onClick={async () => {
+                    // setInputUrl(url)
+                    // setCheckUrl(url)
+                    // await getUrlInfo(url)
+                    // setPlayListEditIndex(index)
+                    // inputUrlInfo.title = title
+                    // inputUrlInfo.author_name = author
+                    // inputUrlInfo.provider_name = provider
+                    // inputUrlInfo.url = url
+                    // inputUrlInfo.thumbnail_url = thumbnail
+                    // setInputUrlInfo(JSON.parse(JSON.stringify(inputUrlInfo)))
+                  }} />
               </FlexColumn>
             </EditListOne>
           ))}
 
         </EditBlock>
-      </Edit>
+      </EditMode>
 
 
 
