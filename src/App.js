@@ -209,7 +209,7 @@ const Textarea = styled.textarea`
 const EditTitle = styled.div`
   margin-bottom: 10px;
   display: grid;
-  grid-template-columns: 1fr 20px;
+  grid-template-columns: 1fr 30px;
 `
 const EditListOne = styled.div`
   margin-top: 4px;
@@ -234,6 +234,14 @@ function App() {
   const listBox = [
     {idx: 0, title: 'Jace\'s Pick', description: '딩고 뮤직 킬링보이스 & ...', username: 'jace'},
   ]
+
+  const listTitleTemplate = 'Jace\'s Pick'
+  const [listTitle, setListTitle] = useState(
+    window.localStorage.getItem('listonTitle') !== null
+    ? JSON.parse(window.localStorage.getItem('listonTitle'))
+    : listTitleTemplate)
+  const [editListTitle, setEditListTitle] = useState(listTitle)
+
   const playListTemplate = [
     // {title: 'YENA (최예나) - SMILEY (Feat. BIBI) MV', author: 'Stone Music Entertainment', provider: 'YouTube', url: 'https://youtu.be/y9kkXTucnLU' , thumbnail: 'https://i.ytimg.com/vi/y9kkXTucnLU/hqdefault.jpg'},
     {title: '멜로망스(MeloMance)의 킬링보이스를 라이브로! - 인사, 동화, 입맞춤, You, 고백, 질투가좋아, 부끄럼, 선물, 짙어져, 좋은날, 욕심, 사랑인가봐, 축제, 초대', author: '딩고 뮤직 / dingo music', provider: 'YouTube', url: 'https://youtu.be/hn4XiirKdNE', thumbnail: 'https://i.ytimg.com/vi/hn4XiirKdNE/hqdefault.jpg'},
@@ -301,7 +309,7 @@ function App() {
       <PlayerList width={windowSize.x}>
         <CollectionPlayFill size="24" />
         <div>ListOn</div>
-        <FlexRight>{listBox[0].title}</FlexRight>
+        <FlexRight>{listTitle}</FlexRight>
         <Flex button onClick={() => setRepeat(prev => !prev)}>{repeat ? <ArrowRepeatAll size="24" /> : <ArrowRepeatAllOff size="24" />}</Flex>
       </PlayerList>
       <Player>
@@ -437,14 +445,27 @@ function App() {
 
         <EditBlock>
           <EditTitle>
-            <div>LIST</div>
+            <AddInput type="text"
+              width={windowSize.x >= 730 ? windowSize.xHalf - 70 : windowSize.x - 70}
+              value={editListTitle}
+              onChange={(e) => {
+                setEditListTitle(e.target.value)
+                }}
+              onKeyUp={(e) => {
+                if (e.code == 'Enter') {
+                  setListTitle(editListTitle)
+                }
+              }}
+            />
             <Flex button>
               <FileMark
                 onClick={() => {
+                  window.localStorage.setItem('listonTitle', JSON.stringify(listTitle));
                   window.localStorage.setItem('liston', JSON.stringify(playList));
                   alert('Your list is saved')}} />
             </Flex>
           </EditTitle>
+          <FlexRight margin="0 0 10px 0" fontSize="12">수정한 List를 계속 이용하려면 저장(<FileMark size="16" />)하시기 바랍니다</FlexRight>
           { playList.map(({title, author, provider, url, thumbnail}, index) => (
             <EditListOne>
               <FlexColumn>
