@@ -2,16 +2,16 @@ import { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components'
 import ReactPlayer from 'react-player/lazy';
 
-import { CollectionPlayFill } from '@styled-icons/bootstrap'
+import { CollectionPlayFill, Check2Square } from '@styled-icons/bootstrap'
 import { ArrowRepeatAllOff, ArrowRepeatAll } from '@styled-icons/fluentui-system-regular'
 import { MoviePlay, ChevronUpCircle, ChevronDownCircle, Edit } from '@styled-icons/boxicons-solid'
 import { TextBulletListSquareEdit, CopyArrowRight } from '@styled-icons/fluentui-system-filled'
 import { PlaylistAddCheck, DeleteForever } from '@styled-icons/material-rounded'
 import { FileMark } from '@styled-icons/remix-line'
 import { InsertRowTop, InsertRowBottom } from '@styled-icons/remix-editor'
-
+import { CheckmarkSquare } from '@styled-icons/evaicons-solid'
+import { Youtube, Vimeo, Soundcloud, Facebook } from '@styled-icons/fa-brands'
 import logoImg from './imgs/logo.svg'
-
 //////////
 // Themes
 const themes = [
@@ -25,14 +25,19 @@ const Flex = styled.div`
   margin: ${props => props.margin};
   grid-area: ${props => props.gridArea};
   display: flex;
-  align-itemts: center;
+  align-items: center;
   ${props => props.spaceBetween && css`
     justify-content: space-between;
   `}  
   ${props => props.button && css`
     cursor: pointer;
   `}
-  
+  ${props => props.fontSize && css`
+    font-size: ${props.fontSize}px;
+  `}
+  ${props => props.alignSelf && css`
+    align-self: ${props.alignSelf};
+  `}
 `
 const FlexCenter = styled(Flex)`
   justify-content: center;
@@ -245,9 +250,10 @@ function App() {
   )
   const [playNumber, setPlayNumber] = useState(0)
 
-  //Edit  
+  //Edit
+  const [editOnOff, setEditOnOff] = useState(false)
   const [inputUrl, setInputUrl] = useState('')
-  // const [checkUrl, setCheckUrl] = useState('')
+  const [editable, setEditable] = useState(false)
   const [inputUrlInfo, setInputUrlInfo] = useState('')
   const getUrlInfo = async (url) => {
     const response = await fetch(`https://noembed.com/embed?dataType=json&url=${url}`)
@@ -260,10 +266,14 @@ function App() {
   const checkTitle = useRef();
   const checkAuthor = useRef();
   useEffect(() => {
-    checkTitle.current.style.height = 'auto'
-    checkTitle.current.style.height = `${checkTitle.current.scrollHeight}px`
-    checkAuthor.current.style.height = 'auto'
-    checkAuthor.current.style.height = `${checkAuthor.current.scrollHeight}px`
+    if (checkTitle.current) {
+      checkTitle.current.style.height = 'auto'
+      checkTitle.current.style.height = `${checkTitle.current.scrollHeight}px`
+    }
+    if (checkAuthor.current) {
+      checkAuthor.current.style.height = 'auto'
+      checkAuthor.current.style.height = `${checkAuthor.current.scrollHeight}px`
+    }
   }, [inputUrlInfo])
 
   // Window Size
@@ -324,9 +334,10 @@ function App() {
       </PlayerThumbnail>
 
       <FlexCenter button margin="20px 0">
-        <TextBulletListSquareEdit size="40" />
+        <TextBulletListSquareEdit size="40" onClick={() => setEditOnOff(prev => !prev)} />
       </FlexCenter>
 
+    {editOnOff ? (
       <EditMode>
         <EditBlock>
           <EditTitle>ADD</EditTitle>
@@ -347,71 +358,84 @@ function App() {
             <Button><PlaylistAddCheck size="26" onClick={() => {
               // setCheckUrl(inputUrl);
               getUrlInfo(inputUrl);
+              setEditable(prev => !prev)
             }} /></Button>
           </Flex>
-          <div className="add-checked">
-            <FlexColumn margin="10px 0 0 0">
-              <ReactPlayer
-                url={inputUrlInfo.url}
-                width={`${windowSize.x >= 730 ? windowSize.xHalf - 25 : windowSize.x - 20}px`}
-                height={`${(windowSize.x >= 730 ? windowSize.xHalf - 25 : windowSize.x - 20) / 2}px`} />
-              <FlexCenter><DivFont08>외부 플레이가 제한된 영상도 있습니다.</DivFont08></FlexCenter>
-            </FlexColumn>
-            <AddOne>
-              <div><img src={inputUrlInfo.thumbnail_url} alt={inputUrlInfo.title} width="100%" height="auto" /></div>
-              <FlexColumn margin="0 5px">
-                <DivFont08>{inputUrlInfo.title}</DivFont08>
-                <AuthorInfo>[ {inputUrlInfo.author_name} ]</AuthorInfo>
+          {editable ? (
+            <div className="add-checked">
+              <FlexColumn margin="10px 0 0 0">
+                <ReactPlayer
+                  url={inputUrlInfo.url}
+                  width={`${windowSize.x >= 730 ? windowSize.xHalf - 25 : windowSize.x - 20}px`}
+                  height={`${(windowSize.x >= 730 ? windowSize.xHalf - 25 : windowSize.x - 20) / 2}px`} />
+                <FlexCenter><DivFont08>외부 플레이가 제한된 영상도 있습니다.</DivFont08></FlexCenter>
               </FlexColumn>
-            </AddOne>
-            <AddInfo>
-              <div>
-                <div className="label">TITLE</div>
-                <Textarea ref={checkTitle} value={inputUrlInfo.title} rows={1}
-                  onChange={(e) => {
-                    const temp = inputUrlInfo
-                    temp.title = e.target.value
-                    setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
-                  }} />
-                <div className="label">AUTHOR</div>
-                <Textarea ref={checkAuthor} value={inputUrlInfo.author_name} rows={1}
-                  onChange={(e) => {
-                    const temp = inputUrlInfo
-                    temp.author_name = e.target.value
-                    setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
-                  }} />
-              </div>
-              <FlexColumn center>
-                <Button><InsertRowTop size="34"
-                  onClick={() => {
-                    console.log(editIndex)
-                    if (editIndex !== null) {
-                      playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
-                      setPlayList(playList.slice())
-                      setEditIndex(null)
-                    } else if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
-                      playList.unshift({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
-                      setPlayList(playList.slice())
-                    }
-                  }} /></Button>
-                <Button><InsertRowBottom size="34"
-                  onClick={() => {
-                    console.log(editIndex)
-                    if (editIndex !== null) {
-                      playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
-                      setPlayList(playList.slice())
-                      setEditIndex(null)
-                    } else if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
-                      playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
-                      setPlayList(playList.slice())
-                    }
-                  }} /></Button>
-              </FlexColumn>
-            </AddInfo>
-          </div>
+              <AddOne>
+                <div><img src={inputUrlInfo.thumbnail_url} alt={inputUrlInfo.title} width="100%" height="auto" /></div>
+                <FlexColumn margin="0 5px">                  
+                  <Flex fontSize="12" alignSelf="flex-start">{inputUrlInfo.title}</Flex>
+                  <AuthorInfo>[ {inputUrlInfo.author_name} ]</AuthorInfo>
+                </FlexColumn>
+              </AddOne>
+              <AddInfo>
+                <div>
+                  <div className="label">TITLE</div>
+                  <Textarea ref={checkTitle} value={inputUrlInfo.title} rows={1}
+                    onChange={(e) => {
+                      const temp = inputUrlInfo
+                      temp.title = e.target.value
+                      setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
+                    }} />
+                  <div className="label">AUTHOR</div>
+                  <Textarea ref={checkAuthor} value={inputUrlInfo.author_name} rows={1}
+                    onChange={(e) => {
+                      const temp = inputUrlInfo
+                      temp.author_name = e.target.value
+                      setInputUrlInfo(JSON.parse(JSON.stringify(temp)))
+                    }} />
+                </div>
+                {editIndex !== null
+                  ? (
+                    <FlexColumn center>
+                      <Button><Check2Square size="34"
+                        onClick={() => {
+                            playList[editIndex] = {title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url}
+                            setPlayList(playList.slice())
+                            setEditIndex(null)
+                            setInputUrl('')
+                            setInputUrlInfo({title: '', author_name: '', provider: '', url: '', thumbnail: ''})
+                            setEditable(false)
+                          }
+                        } /></Button>
+                    </FlexColumn>
+                  )
+                  : (
+                    <FlexColumn center>
+                      <Button><InsertRowTop size="34"
+                        onClick={() => {
+                          if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
+                            playList.unshift({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
+                            setPlayList(playList.slice())
+                            setEditable(false)
+                          }
+                        }} /></Button>
+                      <Button><InsertRowBottom size="34"
+                        onClick={() => {
+                          if (inputUrlInfo.title && inputUrlInfo.author_name && inputUrlInfo.provider_name && inputUrlInfo.url && inputUrlInfo.thumbnail_url) {
+                            playList.push({title: inputUrlInfo.title, author: inputUrlInfo.author_name, provider: inputUrlInfo.provider_name, url: inputUrlInfo.url, thumbnail: inputUrlInfo.thumbnail_url})
+                            setPlayList(playList.slice())
+                            setEditable(false)
+                          }
+                        }} /></Button>
+                    </FlexColumn>
+                  )
+                }
+              </AddInfo>
+            </div>
+          ) : null }
         </EditBlock>
-        <EditBlock>
 
+        <EditBlock>
           <EditTitle>
             <div>LIST</div>
             <Flex button>
@@ -435,7 +459,6 @@ function App() {
                   }} /></Button>
                 <Button><ChevronDownCircle size="20" color={index === playList.length - 1 ? "#555": ""}
                   onClick={() => {
-                    console.log(index, playList.length)
                     if (index !== playList.length - 1) {
                       const temp = playList[index + 1];
                       playList[index + 1] = playList[index];
@@ -446,8 +469,14 @@ function App() {
               </FlexColumn>
               <div><img src={thumbnail} alt={title} width="100%" height="auto" /></div>
               <FlexColumn>
-                <DivFont08>{title}</DivFont08>
-                <AuthorInfo>[ {author} ]</AuthorInfo>
+                <Flex fontSize="12" alignSelf="flex-start">{title}</Flex>
+                <AuthorInfo>
+                  {provider === 'YouTube' ? <Youtube size="14" /> : null}
+                  {provider === 'Vimeo' ? <Vimeo size="14" /> : null}
+                  {provider === 'SoundCloud' ? <Soundcloud size="14" /> : null}
+                  {provider === 'Facebook' ? <Facebook size="14" /> : null}
+                  &nbsp;{author}
+                </AuthorInfo>
               </FlexColumn>
               <FlexColumn>
                 <Button><DeleteForever size="20"
@@ -457,30 +486,32 @@ function App() {
                   }} /></Button>
                 <Button><Edit size="20"
                   onClick={async () => {
-                    // setInputUrl(url)
+                    setEditable(true)
+                    setInputUrl(url)
                     // setCheckUrl(url)
-                    // await getUrlInfo(url)
-                    // setPlayListEditIndex(index)
-                    // inputUrlInfo.title = title
-                    // inputUrlInfo.author_name = author
-                    // inputUrlInfo.provider_name = provider
-                    // inputUrlInfo.url = url
-                    // inputUrlInfo.thumbnail_url = thumbnail
-                    // setInputUrlInfo(JSON.parse(JSON.stringify(inputUrlInfo)))
+                    await getUrlInfo(url)
+                    setEditIndex(index)
+                    inputUrlInfo.title = title
+                    inputUrlInfo.author_name = author
+                    inputUrlInfo.provider_name = provider
+                    inputUrlInfo.url = url
+                    inputUrlInfo.thumbnail_url = thumbnail
+                    setInputUrlInfo(JSON.parse(JSON.stringify(inputUrlInfo)))
                   }} /></Button>
               </FlexColumn>
             </EditListOne>
           ))}
-
         </EditBlock>
       </EditMode>
 
 
+    ) : null}
+
 
       <Footer width={windowSize.x}>
         <Flex>
-          Fully Supported Media: YouTube, Facebook, SoundClound, Vimeo<br />
-          Supported Media: Treamable, Vidme, Wistia, Twitch, DailyMotion, Vidyard
+          Supported Media: YouTube, Vimeo, SoundClound, Facebook<br />
+          {/* Supported Media: Treamable, Vidme, Wistia, Twitch, DailyMotion, Vidyard */}
         </Flex>
         <FlexRight>Copyright. Jace</FlexRight>
       </Footer>
